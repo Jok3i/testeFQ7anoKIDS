@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Testes: Físico-Química 7º Ano</title>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --primary-hover: #004494;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 40px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        p.subtitle {
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .test-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px 20px;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--primary);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        .test-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            border-top-color: var(--primary-hover);
+        }
+
+        .test-card h2 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.4rem;
+        }
+
+        .test-card p {
+            color: #555;
+            margin-bottom: 0;
+            flex-grow: 1;
+        }
+
+        .btn-start {
+            margin-top: 20px;
+            display: inline-block;
+            background-color: #e9ecef;
+            color: var(--primary);
+            padding: 10px 15px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .test-card:hover .btn-start {
+            background-color: var(--primary);
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Testes de Físico-Química</h1>
+        <p class="subtitle">7º Ano - Escolhe o módulo que pretendes rever</p>
+    </header>
+
+    <main class="grid-container">
+        
+        <a href="fasesdalua.html" class="test-card">
+            <h2>1. Fases da Lua e Eclipses</h2>
+            <p>Avalia os teus conhecimentos sobre o satélite natural da Terra, os seus movimentos de translação e rotação, e as condições para a ocorrência de eclipses.</p>
+            <span class="btn-start">Iniciar Teste &rarr;</span>
+        </a>
+
+        <a href="acaodagravidadesobrecorpos.html" class="test-card">
+            <h2>2. Forças e Gravidade</h2>
+            <p>Testa o que sabes sobre a representação vetorial das forças, a utilização de dinamómetros e a ação da força gravítica sobre os corpos.</p>
+            <span class="btn-start">Iniciar Teste &rarr;</span>
+        </a>
+
+        <a href="massaepeso.html" class="test-card">
+            <h2>3. Massa e Peso</h2>
+            <p>Compreende a diferença entre massa (grandeza escalar) e peso (grandeza vetorial), e pratica a relação de proporcionalidade direta entre ambos.</p>
+            <span class="btn-start">Iniciar Teste &rarr;</span>
+        </a>
+
+    </main>
+
+</body>
+</html>

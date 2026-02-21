@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Físico-Química: Forças e Gravidade</title>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --error-color: #dc3545;
+            --success-color: #28a745;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary);
+        }
+        .question-card {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 5px solid transparent;
+        }
+        .question-card.error {
+            border-left-color: var(--error-color);
+            animation: shake 0.4s;
+        }
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .options-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .options-list li {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #004494;
+        }
+        #result-container {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: none;
+            border: 2px solid var(--primary);
+        }
+        .error-msg {
+            color: var(--error-color);
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        /* Classes dinâmicas para a revisão do teste */
+        .correct-answer {
+            background-color: #d4edda;
+            color: #155724;
+            font-weight: bold;
+            border-left: 4px solid var(--success-color);
+        }
+        .wrong-answer {
+            background-color: #f8d7da;
+            color: #721c24;
+            text-decoration: line-through;
+            border-left: 4px solid var(--error-color);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Teste: Ação da Gravidade e Forças</h1>
+    <div id="result-container"></div>
+    <form id="quiz-form">
+        <div id="quiz-container"></div>
+        <button type="submit" id="submit-btn">Submeter Teste</button>
+    </form>
+
+    <script>
+        const quizData = [
+            { question: "Porque é que os corpos caem quando são largados perto da superfície da Terra?", options: ["Porque a Terra exerce uma força magnética sobre eles.", "Porque a Terra atua como um íman de repulsão.", "Porque a Terra exerce uma força de atração sobre eles, chamada força gravítica.", "Porque os corpos ganham massa ao serem largados."], correct: 2 },
+            { question: "Qual dos seguintes NÃO é um dos efeitos que uma força pode provocar num corpo?", options: ["Deformar o corpo.", "Alterar a cor estrutural do corpo.", "Alterar o estado de repouso.", "Alterar a direção do movimento."], correct: 1 },
+            { question: "Apertar uma esponja com as mãos é um exemplo de que efeito provocado por uma força?", options: ["Deformação de um corpo.", "Alteração da direção do movimento.", "Aceleração contínua.", "Alteração do estado de repouso."], correct: 0 },
+            { question: "A força é uma grandeza vetorial. Quais são as quatro características que a definem?", options: ["Massa, volume, direção e peso.", "Direção, sentido, ponto de aplicação e intensidade.", "Intensidade, tempo, velocidade e sentido.", "Ponto de aplicação, massa, densidade e direção."], correct: 1 },
+            { question: "Ao falar da orientação da linha de força (ex: Vertical, Horizontal, Oblíqua), a que característica do vetor nos referimos?", options: ["Ponto de aplicação.", "Sentido.", "Intensidade.", "Direção."], correct: 3 },
+            { question: "Em que unidade do Sistema Internacional se mede a intensidade (ou valor) da força?", options: ["Quilograma (kg).", "Joule (J).", "Newton (N).", "Metro por segundo (m/s)."], correct: 2 },
+            { question: "Como é representada a intensidade de uma força num esquema (vetor)?", options: ["Pela cor escolhida para a seta.", "Apenas pela letra F.", "Pelo comprimento da seta, usando uma escala.", "Pela espessura da linha desenhada."], correct: 2 },
+            { question: "Qual das seguintes forças atua APENAS por contacto?", options: ["Força gravítica.", "Atrito.", "Força magnética.", "Gravidade lunar."], correct: 1 },
+            { question: "Que aparelho de medida se utiliza laboratorialmente para medir a intensidade de uma força?", options: ["Dinamómetro.", "Barómetro.", "Balança analítica.", "Cronómetro."], correct: 0 },
+            { question: "Num dinamómetro, o que significa o conceito de 'alcance'?", options: ["O valor mínimo que ele regista.", "O espaço entre duas marcações da mola.", "O comprimento físico do cilindro do aparelho.", "O valor máximo que o dinamómetro pode medir."], correct: 3 },
+            { question: "Se num dinamómetro existem 5 divisões entre o 0 N e o 1 N, qual é o valor da menor divisão da escala?", options: ["0,1 N", "0,2 N", "0,5 N", "1,0 N"], correct: 1 },
+            { question: "O peso de um corpo é definido como:", options: ["A quantidade de matéria que o corpo possui.", "Uma força à distância de natureza repulsiva.", "A força gravítica que a Terra exerce sobre o corpo.", "O volume ocupado pelo corpo no espaço."], correct: 2 },
+            { question: "Ao traçares o vetor que representa o peso de um corpo, quais são a sua direção e o seu sentido?", options: ["Direção horizontal, sentido da esquerda para a direita.", "Direção vertical, sentido para o centro da Terra.", "Direção oblíqua, sentido para a superfície.", "Direção vertical, sentido de baixo para cima."], correct: 1 },
+            { question: "O que acontece ao peso de um corpo se a sua altitude aumentar (ex: subir ao topo do Monte Everest)?", options: ["O peso diminui, porque a distância ao centro da Terra aumenta.", "O peso aumenta, por causa da falta de oxigénio.", "O peso mantém-se, pois o peso não depende da altitude.", "O peso duplica, pois a altitude duplica."], correct: 0 },
+            { question: "Sabendo que a Terra não é uma esfera perfeita, onde é que um corpo apresentaria um peso maior?", options: ["No Equador, porque está mais afastado do centro da Terra.", "Numa órbita a 400km da Terra.", "Nos polos, porque a distância ao centro da Terra é menor.", "O peso é matematicamente igual em toda a superfície do planeta."], correct: 2 },
+            { question: "A força gravítica é considerada uma interação entre dois corpos. Que característica partilham estas duas forças (Ex: atração Terra-Lua e Lua-Terra)?", options: ["Têm a mesma intensidade e o mesmo sentido.", "Têm intensidade diferente e sentidos opostos.", "Têm a mesma intensidade, mas atuam no mesmo corpo.", "Têm a mesma intensidade e atuam em sentidos opostos."], correct: 3 },
+            { question: "De que fatores principais depende a intensidade da força gravítica?", options: ["Apenas da massa dos corpos.", "Do volume dos corpos e do atrito no ar.", "Da massa dos corpos envolvidos e da distância entre eles.", "Do estado de movimento (repouso ou aceleração)."], correct: 2 },
+            { question: "Qual destes fenómenos naturais NÃO é consequência da força gravítica?", options: ["A ocorrência de marés nos oceanos da Terra.", "A deflexão da agulha de uma bússola.", "As órbitas descritas pelos planetas à volta do Sol.", "O movimento de translação da Lua."], correct: 1 },
+            { question: "Uma caixa encontra-se no chão. Se a empurrares com a mão, qual é o ponto de aplicação da força que exerces?", options: ["O centro de gravidade da Terra.", "O centro da base da caixa.", "O local da caixa onde as tuas mãos tocam.", "O centro da tua própria mão."], correct: 2 },
+            { question: "Num esquema vetorial, a escala indica que cada segmento da seta vale 2 N. Se o vetor tem 5 segmentos de comprimento, qual é a intensidade da força?", options: ["2 N", "5 N", "7 N", "10 N"], correct: 3 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        const form = document.getElementById('quiz-form');
+        const resultContainer = document.getElementById('result-container');
+        const submitBtn = document.getElementById('submit-btn');
+
+        function renderQuiz() {
+            quizData.forEach((data, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `question-${index}`;
+                
+                let optionsHTML = '';
+                data.options.forEach((opt, optIndex) => {
+                    optionsHTML += `
+                        <li id="li-q${index}-opt${optIndex}">
+                            <label>
+                                <input type="radio" name="q${index}" value="${optIndex}">
+                                ${opt}
+                            </label>
+                        </li>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="question-title">${index + 1}. ${data.question}</div>
+                    <ul class="options-list">
+                        ${optionsHTML}
+                    </ul>
+                    <div class="error-msg" id="error-${index}">Por favor, seleciona uma opção antes de submeter.</div>
+                `;
+                
+                quizContainer.appendChild(card);
+            });
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let score = 0;
+            let isValid = true;
+
+            quizData.forEach((data, index) => {
+                const card = document.getElementById(`question-${index}`);
+                const errorMsg = document.getElementById(`error-${index}`);
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+
+                card.classList.remove('error');
+                errorMsg.style.display = 'none';
+
+                if (!selectedOption) {
+                    isValid = false;
+                    card.classList.add('error');
+                    errorMsg.style.display = 'block';
+                }
+            });
+
+            if (isValid) {
+                quizData.forEach((data, index) => {
+                    const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                    const selectedValue = parseInt(selectedOption.value);
+                    const allInputs = document.querySelectorAll(`input[name="q${index}"]`);
+                    
+                    allInputs.forEach(input => input.disabled = true);
+
+                    const liSelected = document.getElementById(`li-q${index}-opt${selectedValue}`);
+                    const liCorrect = document.getElementById(`li-q${index}-opt${data.correct}`);
+
+                    if (selectedValue === data.correct) {
+                        score++;
+                        liSelected.classList.add('correct-answer');
+                    } else {
+                        liSelected.classList.add('wrong-answer');
+                        liCorrect.classList.add('correct-answer');
+                    }
+                });
+
+                submitBtn.style.display = 'none';
+                resultContainer.style.display = 'block';
+                
+                const percentage = Math.round((score / quizData.length) * 100);
+                let evalColor = percentage >= 50 ? 'var(--success-color)' : 'var(--error-color)';
+                
+                resultContainer.innerHTML = `
+                    <p style="margin: 0; font-size: 1.2rem; color: #555;">Teste Submetido</p>
+                    <p style="margin: 10px 0;">Pontuação Final: <span style="color: ${evalColor}">${score} / ${quizData.length}</span> (${percentage}%)</p>
+                    <p style="margin: 0; font-size: 1rem; font-weight: normal; color: #666;">Revê as tuas respostas abaixo. As opções corretas estão marcadas a verde.</p>
+                `;
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            } else {
+                const firstError = document.querySelector('.question-card.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+
+        renderQuiz();
+    </script>
+</body>
+</html>

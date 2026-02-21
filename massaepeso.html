@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Físico-Química: Massa e Peso</title>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --error-color: #dc3545;
+            --success-color: #28a745;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary);
+        }
+        .question-card {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 5px solid transparent;
+        }
+        .question-card.error {
+            border-left-color: var(--error-color);
+            animation: shake 0.4s;
+        }
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .options-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .options-list li {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #004494;
+        }
+        #result-container {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: none;
+            border: 2px solid var(--primary);
+        }
+        .error-msg {
+            color: var(--error-color);
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        /* Classes dinâmicas para a revisão do teste */
+        .correct-answer {
+            background-color: #d4edda;
+            color: #155724;
+            font-weight: bold;
+            border-left: 4px solid var(--success-color);
+        }
+        .wrong-answer {
+            background-color: #f8d7da;
+            color: #721c24;
+            text-decoration: line-through;
+            border-left: 4px solid var(--error-color);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Teste: Massa e Peso</h1>
+    <div id="result-container"></div>
+    <form id="quiz-form">
+        <div id="quiz-container"></div>
+        <button type="submit" id="submit-btn">Submeter Teste</button>
+    </form>
+
+    <script>
+        const quizData = [
+            { question: "Qual é a unidade do Sistema Internacional (SI) para medir a massa?", options: ["Newton (N)", "Grama (g)", "Quilograma (kg)", "Joule (J)"], correct: 2 },
+            { question: "Qual é a unidade do Sistema Internacional (SI) para medir o peso?", options: ["Newton (N)", "Quilograma (kg)", "Metro (m)", "Pascal (Pa)"], correct: 0 },
+            { question: "Que tipo de grandeza é a massa?", options: ["Grandeza vetorial.", "Grandeza escalar.", "Grandeza magnética.", "Grandeza derivada."], correct: 1 },
+            { question: "Que tipo de grandeza é o peso?", options: ["Grandeza térmica.", "Grandeza escalar.", "Grandeza constante.", "Grandeza vetorial."], correct: 3 },
+            { question: "Qual é o instrumento utilizado laboratorialmente para medir a massa de um corpo?", options: ["Dinamómetro.", "Barómetro.", "Cronómetro.", "Balança."], correct: 3 },
+            { question: "Qual é o instrumento utilizado para medir diretamente o peso de um corpo?", options: ["Balança de pratos.", "Dinamómetro.", "Fita métrica.", "Sensor de temperatura."], correct: 1 },
+            { question: "A massa é uma característica intrínseca do corpo. Isto significa que:", options: ["O seu valor muda com a altitude.", "Depende apenas do planeta onde se encontra.", "Não depende do local onde o corpo se encontra.", "Muda consoante o peso aumenta."], correct: 2 },
+            { question: "O peso de um corpo é uma característica constante desse corpo?", options: ["Sim, é sempre igual à massa.", "Não, o peso pode variar com a localização (planeta, altitude, etc.).", "Sim, desde que a temperatura não mude.", "Não, depende apenas da densidade do ar."], correct: 1 },
+            { question: "Um saco de laranjas tem 1 kg de massa na Terra. Qual será a sua massa se for levado para a Lua?", options: ["Menos de 1 kg.", "Exatamente 1 kg.", "Mais de 1 kg.", "Zero, porque não há atmosfera."], correct: 1 },
+            { question: "O que acontece ao PESO do mesmo saco de 1 kg de laranjas quando é transportado da Terra para a Lua?", options: ["Aumenta.", "Mantém-se igual.", "Diminui.", "Transforma-se em massa."], correct: 2 },
+            { question: "Como é o peso de um corpo de 1 kg em Júpiter comparado com a Terra?", options: ["É maior do que na Terra.", "É exatamente igual ao da Terra.", "É menor do que na Terra.", "É nulo."], correct: 0 },
+            { question: "Como varia o alongamento de uma mola se suspendermos corpos de massas cada vez maiores?", options: ["O alongamento diminui.", "O alongamento aumenta, porque o peso é maior.", "A mola não sofre alteração.", "O alongamento aumenta, mas o peso mantém-se."], correct: 1 },
+            { question: "Num mesmo local da superfície da Terra, qual é a relação matemática entre o peso e a massa de um corpo?", options: ["São inversamente proporcionais.", "Não têm qualquer relação matemática.", "O peso é o quadrado da massa.", "São grandezas diretamente proporcionais."], correct: 3 },
+            { question: "No dia a dia, quando as pessoas dizem 'Vou fazer a minha pesagem na farmácia', o que estão cientificamente a medir?", options: ["O peso, pois a balança mede newtons.", "A massa, usando uma unidade escalar (kg).", "A força gravítica que a farmácia exerce sobre elas.", "A constante de gravidade."], correct: 1 },
+            { question: "Se num mesmo local da Terra duplicares a massa de um corpo, o que acontecerá ao seu peso?", options: ["Fica igual.", "Reduz para metade.", "Duplica também.", "Quadruplica."], correct: 2 },
+            { question: "A expressão que traduz a proporcionalidade entre peso (P) e massa (m) num dado planeta é do tipo:", options: ["P = m / constante", "P = m × constante", "P = constante / m", "P = m + constante"], correct: 1 },
+            { question: "A força que a Terra exerce sobre os corpos, também conhecida como peso, tem que direção?", options: ["Vertical.", "Horizontal.", "Oblíqua variável.", "Depende da rotação da Terra."], correct: 0 },
+            { question: "Porque é que o peso dos corpos varia de planeta para planeta no Sistema Solar?", options: ["Porque a constante de proporcionalidade (gravidade) varia consoante o planeta.", "Porque os corpos perdem massa no espaço.", "Devido às diferentes composições atmosféricas.", "Porque a massa aumenta nos planetas gasosos."], correct: 0 },
+            { question: "Uma sonda espacial afasta-se da Terra em direção a Marte. Durante a viagem, longe de qualquer planeta, o que acontece à massa e ao peso da sonda?", options: ["A massa diminui e o peso aumenta.", "A massa anula-se e o peso mantém-se.", "A massa mantém-se constante, mas o peso aproxima-se de zero.", "A massa e o peso ficam ambos a zeros."], correct: 2 },
+            { question: "Qual das afirmações está cientificamente correta segundo o Sistema Internacional?", options: ["O meu peso é 60 kg.", "A minha massa é 60 N.", "O meu peso é 600 kg.", "A minha massa é 60 kg."], correct: 3 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        const form = document.getElementById('quiz-form');
+        const resultContainer = document.getElementById('result-container');
+        const submitBtn = document.getElementById('submit-btn');
+
+        function renderQuiz() {
+            quizData.forEach((data, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `question-${index}`;
+                
+                let optionsHTML = '';
+                data.options.forEach((opt, optIndex) => {
+                    optionsHTML += `
+                        <li id="li-q${index}-opt${optIndex}">
+                            <label>
+                                <input type="radio" name="q${index}" value="${optIndex}">
+                                ${opt}
+                            </label>
+                        </li>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="question-title">${index + 1}. ${data.question}</div>
+                    <ul class="options-list">
+                        ${optionsHTML}
+                    </ul>
+                    <div class="error-msg" id="error-${index}">Por favor, seleciona uma opção antes de submeter.</div>
+                `;
+                
+                quizContainer.appendChild(card);
+            });
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let score = 0;
+            let isValid = true;
+
+            // Validação de inputs vazios
+            quizData.forEach((data, index) => {
+                const card = document.getElementById(`question-${index}`);
+                const errorMsg = document.getElementById(`error-${index}`);
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+
+                card.classList.remove('error');
+                errorMsg.style.display = 'none';
+
+                if (!selectedOption) {
+                    isValid = false;
+                    card.classList.add('error');
+                    errorMsg.style.display = 'block';
+                }
+            });
+
+            // Se o form for válido, calcular pontuação e apresentar resultados
+            if (isValid) {
+                quizData.forEach((data, index) => {
+                    const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                    const selectedValue = parseInt(selectedOption.value);
+                    const allInputs = document.querySelectorAll(`input[name="q${index}"]`);
+                    
+                    // Prevenir edições futuras trancando os radio buttons
+                    allInputs.forEach(input => input.disabled = true);
+
+                    const liSelected = document.getElementById(`li-q${index}-opt${selectedValue}`);
+                    const liCorrect = document.getElementById(`li-q${index}-opt${data.correct}`);
+
+                    if (selectedValue === data.correct) {
+                        score++;
+                        liSelected.classList.add('correct-answer');
+                    } else {
+                        liSelected.classList.add('wrong-answer');
+                        liCorrect.classList.add('correct-answer');
+                    }
+                });
+
+                submitBtn.style.display = 'none';
+                resultContainer.style.display = 'block';
+                
+                const percentage = Math.round((score / quizData.length) * 100);
+                let evalColor = percentage >= 50 ? 'var(--success-color)' : 'var(--error-color)';
+                
+                resultContainer.innerHTML = `
+                    <p style="margin: 0; font-size: 1.2rem; color: #555;">Teste Submetido</p>
+                    <p style="margin: 10px 0;">Pontuação Final: <span style="color: ${evalColor}">${score} / ${quizData.length}</span> (${percentage}%)</p>
+                    <p style="margin: 0; font-size: 1rem; font-weight: normal; color: #666;">Revê as tuas respostas abaixo. As opções corretas estão marcadas a verde.</p>
+                `;
+                
+                // Forçar o scroll up no browser para ler logo a pontuação final
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            } else {
+                // Focus automático no primeiro cartão não preenchido
+                const firstError = document.querySelector('.question-card.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+
+        renderQuiz();
+    </script>
+</body>
+</html>

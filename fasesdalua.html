@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Físico-Química: Fases da Lua e Eclipses</title>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --error-color: #dc3545;
+            --success-color: #28a745;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary);
+        }
+        .question-card {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 5px solid transparent;
+        }
+        .question-card.error {
+            border-left-color: var(--error-color);
+            animation: shake 0.4s;
+        }
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .options-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .options-list li {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #004494;
+        }
+        #result-container {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: none;
+            border: 2px solid var(--primary);
+        }
+        .error-msg {
+            color: var(--error-color);
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        /* Classes dinâmicas para a revisão do teste */
+        .correct-answer {
+            background-color: #d4edda;
+            color: #155724;
+            font-weight: bold;
+            border-left: 4px solid var(--success-color);
+        }
+        .wrong-answer {
+            background-color: #f8d7da;
+            color: #721c24;
+            text-decoration: line-through;
+            border-left: 4px solid var(--error-color);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Teste: As Fases da Lua e os Eclipses</h1>
+    <div id="result-container"></div>
+    <form id="quiz-form">
+        <div id="quiz-container"></div>
+        <button type="submit" id="submit-btn">Submeter Teste</button>
+    </form>
+
+    <script>
+        const quizData = [
+            { question: "A Lua possui atmosfera?", options: ["Sim, muito densa e rica em oxigénio.", "Não, a Lua não tem atmosfera.", "Sim, mas muito fina e composta por hélio.", "Sim, semelhante à da Terra."], correct: 1 },
+            { question: "Porque é que o céu na Lua é negro, mesmo de dia?", options: ["Devido à elevada quantidade de poeira lunar.", "Porque a Lua não tem luz própria.", "Porque não tem atmosfera para dispersar a luz solar.", "Devido às constantes tempestades solares."], correct: 2 },
+            { question: "Qual é a relação de tamanho entre o diâmetro da Lua e o da Terra?", options: ["O diâmetro da Lua é 3,7 vezes menor que o da Terra.", "O diâmetro da Lua é igual ao da Terra.", "A Lua é cerca de 10 vezes menor que a Terra.", "O diâmetro da Terra é o dobro do da Lua."], correct: 0 },
+            { question: "Qual é o período de translação da Lua (período sideral)?", options: ["Aproximadamente 29 dias.", "24 horas.", "27,3 dias.", "365 dias."], correct: 2 },
+            { question: "De quanto em quanto tempo se repetem as fases da Lua (período sinódico)?", options: ["A cada 27,3 dias.", "Aproximadamente a cada 29 dias.", "A cada 24 horas.", "Uma vez por ano."], correct: 1 },
+            { question: "Quais são as quatro principais fases da Lua?", options: ["Nova, crescente, cheia e escura.", "Nova, quarto crescente, cheia e quarto minguante.", "Visível, oculta, cheia e nova.", "Quarto crescente, meia lua, cheia e quarto minguante."], correct: 1 },
+            { question: "Qual é o período de rotação da Lua?", options: ["29 dias.", "27,3 dias.", "12 horas.", "365 dias."], correct: 1 },
+            { question: "Porque é que a Lua 'mostra' sempre a mesma face à Terra?", options: ["Porque não tem movimento de rotação.", "Devido ao campo magnético terrestre.", "Porque a Terra roda mais rápido que a Lua.", "Como os períodos de translação e de rotação da Lua são iguais."], correct: 3 },
+            { question: "Como se chama a metade da Lua que não conseguimos ver a partir da Terra?", options: ["Face negra.", "Face oculta.", "Lado escuro.", "Hemisfério cego."], correct: 1 },
+            { question: "Que sonda tirou a primeira imagem da face oculta da Lua em 1959?", options: ["Sonda Luna 3.", "Apollo 11.", "Sonda Sputnik.", "Voyager 1."], correct: 0 },
+            { question: "Que alinhamento de astros origina um eclipse da Lua?", options: ["Sol - Lua - Terra.", "Lua - Terra - Sol.", "Sol - Terra - Lua.", "Terra - Sol - Lua."], correct: 2 },
+            { question: "Em que fase da Lua pode ocorrer um eclipse lunar?", options: ["Lua nova.", "Quarto minguante.", "Quarto crescente.", "Lua cheia."], correct: 3 },
+            { question: "O que caracteriza um eclipse lunar total?", options: ["A Lua é iluminada pela luz refletida pela Terra.", "A Lua é escurecida pela sombra da Terra.", "A Lua passa apenas na penumbra da Terra.", "O Sol cobre totalmente a Lua."], correct: 1 },
+            { question: "Num eclipse lunar penumbral, o que acontece à Lua?", options: ["Fica completamente invisível.", "Parte da Lua desaparece no céu.", "Passa na penumbra da Terra, ficando toda menos brilhante, mas não escura.", "Torna-se azul."], correct: 2 },
+            { question: "Porque é que não ocorrem eclipses lunares todos os meses?", options: ["Porque a Lua nem sempre passa entre a Terra e o Sol.", "Porque a Terra abranda o seu movimento de translação no inverno.", "Devido às nuvens na atmosfera terrestre.", "Porque o plano de órbita da Lua não coincide com o plano de órbita da Terra em torno do Sol."], correct: 3 },
+            { question: "Que alinhamento define as condições para a ocorrência de um eclipse do Sol?", options: ["Sol - Terra - Lua.", "Sol - Lua - Terra.", "Terra - Sol - Lua.", "Lua - Sol - Terra."], correct: 1 },
+            { question: "Em que fase da Lua pode ocorrer um eclipse do Sol?", options: ["Lua nova.", "Lua cheia.", "Quarto crescente.", "Qualquer fase desde que alinhada."], correct: 0 },
+            { question: "Para observar um eclipse solar total, onde tem de estar o observador?", options: ["Na zona de penumbra.", "No hemisfério sul da Terra.", "Na região da sombra.", "Na face oculta da Terra."], correct: 2 },
+            { question: "Se o observador se encontrar na zona de penumbra projetada pela Lua na Terra, que eclipse observa?", options: ["Eclipse solar total.", "Eclipse solar anular.", "Eclipse lunar penumbral.", "Eclipse solar parcial."], correct: 3 },
+            { question: "Qual é a condição para que ocorra um eclipse solar anular?", options: ["A Terra tem de estar mais próxima do Sol.", "A Lua encontra-se mais afastada da Terra.", "A Lua cruza a sombra da Terra no perigeu.", "Ocorre durante o solstício de verão."], correct: 1 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        const form = document.getElementById('quiz-form');
+        const resultContainer = document.getElementById('result-container');
+        const submitBtn = document.getElementById('submit-btn');
+
+        function renderQuiz() {
+            quizData.forEach((data, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `question-${index}`;
+                
+                let optionsHTML = '';
+                data.options.forEach((opt, optIndex) => {
+                    optionsHTML += `
+                        <li id="li-q${index}-opt${optIndex}">
+                            <label>
+                                <input type="radio" name="q${index}" value="${optIndex}">
+                                ${opt}
+                            </label>
+                        </li>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="question-title">${index + 1}. ${data.question}</div>
+                    <ul class="options-list">
+                        ${optionsHTML}
+                    </ul>
+                    <div class="error-msg" id="error-${index}">Por favor, seleciona uma opção antes de submeter.</div>
+                `;
+                
+                quizContainer.appendChild(card);
+            });
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let score = 0;
+            let isValid = true;
+
+            // Passo 1: Validação de preenchimento
+            quizData.forEach((data, index) => {
+                const card = document.getElementById(`question-${index}`);
+                const errorMsg = document.getElementById(`error-${index}`);
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+
+                card.classList.remove('error');
+                errorMsg.style.display = 'none';
+
+                if (!selectedOption) {
+                    isValid = false;
+                    card.classList.add('error');
+                    errorMsg.style.display = 'block';
+                }
+            });
+
+            // Passo 2: Avaliação e injeção do UI de revisão
+            if (isValid) {
+                quizData.forEach((data, index) => {
+                    const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                    const selectedValue = parseInt(selectedOption.value);
+                    const allInputs = document.querySelectorAll(`input[name="q${index}"]`);
+                    
+                    // Bloquear inputs para não editarem depois de submeter
+                    allInputs.forEach(input => input.disabled = true);
+
+                    const liSelected = document.getElementById(`li-q${index}-opt${selectedValue}`);
+                    const liCorrect = document.getElementById(`li-q${index}-opt${data.correct}`);
+
+                    if (selectedValue === data.correct) {
+                        score++;
+                        liSelected.classList.add('correct-answer');
+                    } else {
+                        liSelected.classList.add('wrong-answer');
+                        liCorrect.classList.add('correct-answer');
+                    }
+                });
+
+                submitBtn.style.display = 'none';
+                resultContainer.style.display = 'block';
+                
+                const percentage = Math.round((score / quizData.length) * 100);
+                let evalColor = percentage >= 50 ? 'var(--success-color)' : 'var(--error-color)';
+                
+                resultContainer.innerHTML = `
+                    <p style="margin: 0; font-size: 1.2rem; color: #555;">Teste Submetido</p>
+                    <p style="margin: 10px 0;">Pontuação Final: <span style="color: ${evalColor}">${score} / ${quizData.length}</span> (${percentage}%)</p>
+                    <p style="margin: 0; font-size: 1rem; font-weight: normal; color: #666;">Revê as tuas respostas abaixo. As opções corretas estão marcadas a verde.</p>
+                `;
+                
+                // Força o scroll suave para o topo para mostrar o resultado
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            } else {
+                const firstError = document.querySelector('.question-card.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+
+        renderQuiz();
+    </script>
+</body>
+</html>
