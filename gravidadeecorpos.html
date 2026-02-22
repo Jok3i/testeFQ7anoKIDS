@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Avançado: Ação da Gravidade e Forças</title>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --error-color: #dc3545;
+            --success-color: #28a745;
+            --card-bg: #fff;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .btn-back {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background-color: #e9ecef;
+            color: var(--primary);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        .btn-back:hover { background-color: #d3d9df; }
+        
+        h1 { text-align: center; color: var(--primary); }
+        
+        .question-card {
+            background: var(--card-bg);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 5px solid transparent;
+        }
+        .question-card.error {
+            border-left-color: var(--error-color);
+            animation: shake 0.4s;
+        }
+        .question-title { font-weight: bold; margin-bottom: 15px; }
+        
+        /* Tipos de Pergunta */
+        .options-list { list-style: none; padding: 0; }
+        .options-list li { margin-bottom: 10px; padding: 8px; border-radius: 4px; }
+        label { cursor: pointer; display: flex; align-items: center; width: 100%; }
+        input[type="radio"] { margin-right: 10px; }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            background-color: #fff;
+        }
+        .match-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .match-label { font-weight: 500; width: 45%; padding-right: 10px; }
+        .match-select-container { width: 55%; }
+
+        button {
+            display: block; width: 100%; padding: 15px;
+            background-color: var(--primary); color: #fff;
+            border: none; border-radius: 8px; font-size: 1.1rem;
+            cursor: pointer; transition: 0.3s;
+        }
+        button:hover { background-color: #004494; }
+        
+        #result-container {
+            margin-bottom: 20px; padding: 20px; background: #fff;
+            border-radius: 8px; text-align: center; font-size: 1.5rem;
+            font-weight: bold; display: none; border: 2px solid var(--primary);
+        }
+        .error-msg {
+            color: var(--error-color); font-size: 0.9rem; margin-top: 10px; display: none;
+        }
+
+        /* Classes de Revisão */
+        .correct-answer {
+            background-color: #d4edda; color: #155724; border-left: 4px solid var(--success-color);
+        }
+        .wrong-answer {
+            background-color: #f8d7da; color: #721c24; border-left: 4px solid var(--error-color);
+        }
+        .review-correction {
+            font-size: 0.9rem; color: var(--success-color); font-weight: bold; margin-top: 5px; display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="btn-back">&larr; Voltar ao Menu</a>
+    <h1>Teste Avançado: Ação da Gravidade</h1>
+    <div id="result-container"></div>
+    <form id="quiz-form">
+        <div id="quiz-container"></div>
+        <button type="submit" id="submit-btn">Submeter Teste</button>
+    </form>
+
+    <script>
+        const quizData = [
+            {
+                type: "tf",
+                question: "1. A força gravítica é uma força que atua apenas por contacto mecânico.",
+                options: ["Verdadeiro", "Falso"],
+                correct: 1
+            },
+            {
+                type: "tf",
+                question: "2. O peso de um corpo diminui à medida que a altitude aumenta.",
+                options: ["Verdadeiro", "Falso"],
+                correct: 0
+            },
+            {
+                type: "mcq",
+                question: "3. Se num dinamómetro existem 5 divisões entre 0 N e 1 N, qual é o valor da menor divisão?",
+                options: ["0,1 N", "0,2 N", "0,5 N", "1,0 N"],
+                correct: 1
+            },
+            {
+                type: "fill",
+                question: "4. A unidade do Sistema Internacional usada para medir a intensidade de uma força é o...",
+                correctAnswers: ["newton", "n"]
+            },
+            {
+                type: "fill",
+                question: "5. O aparelho laboratorial utilizado para medir a intensidade das forças chama-se...",
+                correctAnswers: ["dinamometro", "dinamómetro"]
+            },
+            {
+                type: "match",
+                question: "6. Faz a correspondência correta entre a característica do vetor Força e a sua definição:",
+                pairs: [
+                    { id: "dir", label: "Direção", correct: "opt2" },
+                    { id: "sen", label: "Sentido", correct: "opt1" },
+                    { id: "int", label: "Intensidade", correct: "opt4" },
+                    { id: "pto", label: "Ponto de Aplicação", correct: "opt3" }
+                ],
+                options: [
+                    { val: "opt1", text: "Para onde a seta aponta (ex: da esquerda para a direita)" },
+                    { val: "opt2", text: "Orientação da linha de ação (ex: vertical, horizontal)" },
+                    { val: "opt3", text: "Local do corpo onde a força atua" },
+                    { val: "opt4", text: "Valor medido em newtons (N)" }
+                ]
+            },
+            {
+                type: "tf",
+                question: "7. A força que a Terra exerce sobre a Lua é muito maior do que a força que a Lua exerce sobre a Terra.",
+                options: ["Verdadeiro", "Falso"],
+                correct: 1
+            },
+            {
+                type: "fill",
+                question: "8. A força magnética e a força gravítica são classificadas como forças à _________, pois não necessitam de toque físico.",
+                correctAnswers: ["distancia", "distância"]
+            },
+            {
+                type: "match",
+                question: "9. Relaciona a ação com o efeito provocado pela força aplicada:",
+                pairs: [
+                    { id: "chutar", label: "Chutar uma bola parada", correct: "opt1" },
+                    { id: "travar", label: "Travar uma bicicleta", correct: "opt2" },
+                    { id: "apertar", label: "Apertar uma esponja", correct: "opt3" }
+                ],
+                options: [
+                    { val: "opt1", text: "Alterar o estado de repouso" },
+                    { val: "opt2", text: "Alterar a velocidade (abrandar)" },
+                    { val: "opt3", text: "Deformar o corpo" }
+                ]
+            },
+            {
+                type: "tf",
+                question: "10. O ponto de aplicação do vetor Peso localiza-se sempre no próprio corpo que é atraído.",
+                options: ["Verdadeiro", "Falso"],
+                correct: 0
+            },
+            {
+                type: "mcq",
+                question: "11. Qual é a consequência visível da força gravítica exercida em conjunto pela Lua e pelo Sol sobre a Terra?",
+                options: ["Formação de crateras lunares.", "As marés oceânicas.", "A inclinação do eixo da Terra.", "O brilho emitido pela Lua."],
+                correct: 1
+            },
+            {
+                type: "fill",
+                question: "12. O local exato do corpo onde uma força atua, ou onde há contacto, chama-se ponto de _________.",
+                correctAnswers: ["aplicacao", "aplicação"]
+            },
+            {
+                type: "tf",
+                question: "13. Se uma maçã for transportada do nível do mar para o topo de uma montanha elevada, a sua massa e o seu peso diminuem em simultâneo.",
+                options: ["Verdadeiro", "Falso"],
+                correct: 1
+            },
+            {
+                type: "match",
+                question: "14. Faz a correspondência sobre os fatores que alteram a intensidade da força gravítica (peso):",
+                pairs: [
+                    { id: "massa_mais", label: "Corpo com maior massa", correct: "opt1" },
+                    { id: "dist_mais", label: "Maior distância ao centro da Terra", correct: "opt3" },
+                    { id: "equador", label: "Mover o corpo dos Polos para o Equador", correct: "opt2" }
+                ],
+                options: [
+                    { val: "opt1", text: "Sofre maior atração gravítica (maior peso)" },
+                    { val: "opt2", text: "Fica mais afastado do centro (peso diminui)" },
+                    { val: "opt3", text: "Resulta numa atração gravítica menor" }
+                ]
+            },
+            {
+                type: "mcq",
+                question: "15. Num esquema, a intensidade de uma força é representada por um vetor desenhado com 4 segmentos. Se a escala indica que cada segmento vale 3 N, qual é o valor da força?",
+                options: ["7 N", "12 N", "1,3 N", "43 N"],
+                correct: 1
+            },
+            {
+                type: "tf",
+                question: "16. 'Vertical' ou 'Horizontal' indicam o sentido de uma força, enquanto 'para cima' indica a direção.",
+                options: ["Verdadeiro", "Falso"],
+                correct: 1
+            },
+            {
+                type: "fill",
+                question: "17. A força atrativa que puxa todos os objetos em direção ao centro da Terra chama-se força _________.",
+                correctAnswers: ["gravitica", "gravítica", "da gravidade", "gravidade", "força gravitica", "força gravítica", "força da gravidade"]
+            },
+            {
+                type: "mcq",
+                question: "18. O peso de um corpo na superfície da Terra depende intrinsecamente de que fatores?",
+                options: ["Apenas da massa dos corpos envolvidos.", "Do volume e da aerodinâmica do corpo.", "Da massa do corpo e da distância ao centro da Terra.", "Da velocidade de queda do corpo."],
+                correct: 2
+            },
+            {
+                type: "tf",
+                question: "19. Tal como a massa, o peso de um corpo é uma grandeza que se mantém sempre constante, independentemente do planeta.",
+                options: ["Verdadeiro", "Falso"],
+                correct: 1
+            },
+            {
+                type: "fill",
+                question: "20. O valor máximo que um dinamómetro é capaz de medir em segurança designa-se por _________ do aparelho.",
+                correctAnswers: ["alcance"]
+            }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        const form = document.getElementById('quiz-form');
+        const resultContainer = document.getElementById('result-container');
+        const submitBtn = document.getElementById('submit-btn');
+
+        function renderQuiz() {
+            quizData.forEach((data, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `question-${index}`;
+                
+                let contentHTML = `<div class="question-title">${data.question}</div>`;
+
+                switch(data.type) {
+                    case 'mcq':
+                    case 'tf':
+                        contentHTML += `<ul class="options-list">`;
+                        data.options.forEach((opt, optIndex) => {
+                            contentHTML += `
+                                <li id="li-q${index}-opt${optIndex}">
+                                    <label>
+                                        <input type="radio" name="q${index}" value="${optIndex}">
+                                        ${opt}
+                                    </label>
+                                </li>`;
+                        });
+                        contentHTML += `</ul>`;
+                        break;
+                    
+                    case 'fill':
+                        contentHTML += `
+                            <input type="text" id="input-q${index}" placeholder="Escreve a tua resposta aqui..." autocomplete="off">
+                            <span id="review-q${index}" class="review-correction" style="display:none;"></span>
+                        `;
+                        break;
+
+                    case 'match':
+                        let dropdownOpts = `<option value="" disabled selected>Seleciona a correspondência...</option>`;
+                        data.options.forEach(o => {
+                            dropdownOpts += `<option value="${o.val}">${o.text}</option>`;
+                        });
+
+                        data.pairs.forEach((pair, pIndex) => {
+                            contentHTML += `
+                                <div class="match-row" id="row-q${index}-p${pIndex}">
+                                    <div class="match-label">${pair.label}</div>
+                                    <div class="match-select-container">
+                                        <select id="sel-q${index}-p${pIndex}">
+                                            ${dropdownOpts}
+                                        </select>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        break;
+                }
+
+                contentHTML += `<div class="error-msg" id="error-${index}">Por favor, responde a esta questão.</div>`;
+                card.innerHTML = contentHTML;
+                quizContainer.appendChild(card);
+            });
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let totalPoints = 0; 
+            let earnedPoints = 0;
+            let isValid = true;
+
+            quizData.forEach((data, index) => {
+                const card = document.getElementById(`question-${index}`);
+                const errorMsg = document.getElementById(`error-${index}`);
+                card.classList.remove('error');
+                errorMsg.style.display = 'none';
+
+                let answered = false;
+
+                switch(data.type) {
+                    case 'mcq':
+                    case 'tf':
+                        answered = document.querySelector(`input[name="q${index}"]:checked`) !== null;
+                        break;
+                    case 'fill':
+                        const textVal = document.getElementById(`input-q${index}`).value.trim();
+                        answered = textVal !== "";
+                        break;
+                    case 'match':
+                        answered = true;
+                        data.pairs.forEach((p, pIndex) => {
+                            const selVal = document.getElementById(`sel-q${index}-p${pIndex}`).value;
+                            if(selVal === "") answered = false;
+                        });
+                        break;
+                }
+
+                if (!answered) {
+                    isValid = false;
+                    card.classList.add('error');
+                    errorMsg.style.display = 'block';
+                }
+            });
+
+            if (!isValid) {
+                const firstError = document.querySelector('.question-card.error');
+                if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            quizData.forEach((data, index) => {
+                switch(data.type) {
+                    case 'mcq':
+                    case 'tf':
+                        totalPoints += 1;
+                        const selectedRadio = document.querySelector(`input[name="q${index}"]:checked`);
+                        const radioVal = parseInt(selectedRadio.value);
+                        
+                        document.querySelectorAll(`input[name="q${index}"]`).forEach(i => i.disabled = true);
+                        
+                        const liSel = document.getElementById(`li-q${index}-opt${radioVal}`);
+                        const liCor = document.getElementById(`li-q${index}-opt${data.correct}`);
+
+                        if (radioVal === data.correct) {
+                            earnedPoints += 1;
+                            liSel.classList.add('correct-answer');
+                        } else {
+                            liSel.classList.add('wrong-answer');
+                            liCor.classList.add('correct-answer');
+                        }
+                        break;
+
+                    case 'fill':
+                        totalPoints += 1;
+                        const inputEl = document.getElementById(`input-q${index}`);
+                        const userText = inputEl.value.trim().toLowerCase();
+                        inputEl.disabled = true;
+                        
+                        const isCorrect = data.correctAnswers.some(ans => userText === ans);
+
+                        if(isCorrect) {
+                            earnedPoints += 1;
+                            inputEl.style.backgroundColor = "#d4edda";
+                            inputEl.style.borderColor = "var(--success-color)";
+                        } else {
+                            inputEl.style.backgroundColor = "#f8d7da";
+                            inputEl.style.borderColor = "var(--error-color)";
+                            inputEl.style.textDecoration = "line-through";
+                            
+                            const reviewSpan = document.getElementById(`review-q${index}`);
+                            reviewSpan.textContent = `Resposta correta aceita: ${data.correctAnswers[0]}`;
+                            reviewSpan.style.display = "block";
+                        }
+                        break;
+
+                    case 'match':
+                        data.pairs.forEach((pair, pIndex) => {
+                            totalPoints += 1;
+                            const selEl = document.getElementById(`sel-q${index}-p${pIndex}`);
+                            const rowEl = document.getElementById(`row-q${index}-p${pIndex}`);
+                            const userSel = selEl.value;
+                            
+                            selEl.disabled = true;
+
+                            if(userSel === pair.correct) {
+                                earnedPoints += 1;
+                                rowEl.style.borderLeft = "4px solid var(--success-color)";
+                                rowEl.style.backgroundColor = "#d4edda";
+                            } else {
+                                rowEl.style.borderLeft = "4px solid var(--error-color)";
+                                rowEl.style.backgroundColor = "#f8d7da";
+                                
+                                const correctText = data.options.find(o => o.val === pair.correct).text;
+                                rowEl.innerHTML += `<div class="review-correction" style="width:100%; margin-top:5px;">Correto: ${correctText}</div>`;
+                            }
+                        });
+                        break;
+                }
+            });
+
+            submitBtn.style.display = 'none';
+            resultContainer.style.display = 'block';
+            
+            const percentage = Math.round((earnedPoints / totalPoints) * 100);
+            let evalColor = percentage >= 50 ? 'var(--success-color)' : 'var(--error-color)';
+            
+            resultContainer.innerHTML = `
+                <p style="margin: 0; font-size: 1.2rem; color: #555;">Teste Submetido</p>
+                <p style="margin: 10px 0;">Pontuação Final: <span style="color: ${evalColor}">${earnedPoints} / ${totalPoints}</span> (${percentage}%)</p>
+                <p style="margin: 0; font-size: 1rem; font-weight: normal; color: #666;">Revê as tuas respostas abaixo. As marcações verdes indicam as opções corretas.</p>
+            `;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        renderQuiz();
+    </script>
+</body>
+</html>
